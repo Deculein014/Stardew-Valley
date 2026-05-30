@@ -1,8 +1,7 @@
 # Stardew Valley Farm Planner
 
 A simple desktop farm planner for Stardew Valley. Built as a personal project — 
-part learning experience, part proof that being too into Stardew Valley 
-can actually teach you how to code.
+part learning experience, part proof that being too into Stardew Valley can actually push you to explore something new.
 
 > Vibe coded.
 
