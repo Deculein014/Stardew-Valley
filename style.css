@@ -1,0 +1,72 @@
+* {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+}
+
+body {
+  background: #1e3d10;
+  font-family: Arial, sans-serif;
+  padding: 10px;
+}
+
+.toolbar {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  margin-bottom: 10px;
+}
+
+.tool-btn {
+  padding: 8px 14px;
+  border: 2px solid #555;
+  background: #2d5a1b;
+  color: white;
+  border-radius: 6px;
+  cursor: pointer;
+  font-size: 13px;
+}
+
+.tool-btn:hover {
+  background: #3a7a22;
+}
+
+.tool-btn.active {
+  border-color: gold;
+  background: #3a7a22;
+}
+
+#grid {
+  display: grid;
+  grid-template-columns: repeat(28, 22px);
+  gap: 1px;
+  background: #1e3d10;
+}
+
+.cell {
+  width: 22px;
+  height: 22px;
+  background: #4a7c2f;
+  border: 0.5px solid rgba(0,0,0,0.2);
+  border-radius: 2px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 11px;
+  cursor: pointer;
+}
+
+.cell:hover {
+  filter: brightness(1.2);
+}
+
+.range-normal   { background: rgba(55, 138, 221, 0.45); }
+.range-quality  { background: rgba(29, 158, 117, 0.45); }
+.range-iridium  { background: rgba(127, 119, 221, 0.45); }
+.range-scarecrow{ background: rgba(186, 117, 23, 0.35); }
+
+.info {
+  margin-top: 10px;
+  color: #ccc;
+  font-size: 13px;
+}

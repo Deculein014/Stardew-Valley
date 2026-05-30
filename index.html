@@ -1,0 +1,25 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="UTF-8">
+  <title>Farm Planner</title>
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+  <div class="toolbar">
+    <button class="tool-btn active" onclick="setTool('normal')">💧 Sprinkler</button>
+    <button class="tool-btn" onclick="setTool('quality')">🚿 Quality Sprinkler</button>
+    <button class="tool-btn" onclick="setTool('iridium')">⚙️ Iridium Sprinkler</button>
+    <button class="tool-btn" onclick="setTool('scarecrow')">🌾 Scarecrow</button>
+    <button class="tool-btn" onclick="setTool('erase')">❌ Erase</button>
+    <button class="tool-btn" onclick="clearAll()">🗑️ Clear All</button>
+  </div>
+
+  <div id="grid"></div>
+
+  <div class="info" id="info">Select a tool and click tiles to place items.</div>
+
+  <script src="renderer.js"></script>
+</body>
+</html>
