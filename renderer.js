@@ -1,110 +1,568 @@
-const ROWS = 24, COLS = 28;
-const grid = Array.from({length: ROWS}, () => Array(COLS).fill(null));
-let currentTool = 'normal';
+const grid = document.getElementById('grid');
 
-const TOOLS = {
-  normal:    { emoji: '💧', rangeClass: 'range-normal' },
-  quality:   { emoji: '🚿', rangeClass: 'range-quality' },
-  iridium:   { emoji: '⚙️', rangeClass: 'range-iridium' },
-  scarecrow: { emoji: '🌾', rangeClass: 'range-scarecrow' },
-};
+const toolButtons =
+document.querySelectorAll('.tool-btn');
 
-function getRange(type, row, col) {
-  const cells = [];
-  if (type === 'normal') {
-    [[-1,0],[1,0],[0,-1],[0,1]].forEach(([dr,dc]) => cells.push([row+dr, col+dc]));
-  } else if (type === 'quality') {
-    for (let dr=-1; dr<=1; dr++) for (let dc=-1; dc<=1; dc++) {
-      if (dr===0 && dc===0) continue;
-      cells.push([row+dr, col+dc]);
-    }
-  } else if (type === 'iridium') {
-    for (let dr=-2; dr<=2; dr++) for (let dc=-2; dc<=2; dc++) {
-      if (dr===0 && dc===0) continue;
-      cells.push([row+dr, col+dc]);
-    }
-  } else if (type === 'scarecrow') {
-    for (let dr=-8; dr<=8; dr++) for (let dc=-8; dc<=8; dc++) {
-      if (dr===0 && dc===0) continue;
-      if (Math.sqrt(dr*dr + dc*dc) <= 8) cells.push([row+dr, col+dc]);
-    }
-  }
-  return cells.filter(([r,c]) => r>=0 && r<ROWS && c>=0 && c<COLS);
+const saveBtn =
+document.getElementById('save-btn');
+
+const loadBtn =
+document.getElementById('load-btn');
+
+const clearBtn =
+document.getElementById('clear-btn');
+
+let currentTool = 'scarecrow';
+
+const GRID_WIDTH = 40;
+const GRID_HEIGHT = 30;
+
+const allTools = [
+    'scarecrow',
+    'sprinkler',
+    'quality-sprinkler',
+    'iridium-sprinkler'
+];
+
+/* CREATE GRID */
+
+for (
+    let i = 0;
+    i < GRID_WIDTH * GRID_HEIGHT;
+    i++
+) {
+
+    const cell =
+    document.createElement('div');
+
+    cell.classList.add('cell');
+
+    cell.dataset.index = i;
+
+    /* PLACE */
+
+    cell.addEventListener('click', () => {
+
+        clearCell(cell);
+
+        cell.classList.add(currentTool);
+
+        updateRanges();
+
+    });
+
+    /* REMOVE */
+
+    cell.addEventListener('dblclick', () => {
+
+        clearCell(cell);
+
+        updateRanges();
+
+    });
+
+    grid.appendChild(cell);
+
 }
 
-function buildGrid() {
-  const container = document.getElementById('grid');
-  container.innerHTML = '';
-  for (let r=0; r<ROWS; r++) {
-    for (let c=0; c<COLS; c++) {
-      const cell = document.createElement('div');
-      cell.className = 'cell';
-      cell.id = `c-${r}-${c}`;
-      cell.onclick = () => handleClick(r, c);
-      container.appendChild(cell);
+/* TOOL SWITCH */
+
+toolButtons.forEach(button => {
+
+    button.addEventListener('click', () => {
+
+        toolButtons.forEach(btn => {
+
+            btn.classList.remove('active');
+
+        });
+
+        button.classList.add('active');
+
+        currentTool =
+        button.dataset.tool;
+
+    });
+
+});
+
+/* CLEAR CELL */
+
+function clearCell(cell) {
+
+    allTools.forEach(tool => {
+
+        cell.classList.remove(tool);
+
+    });
+
+}
+
+/* GET CELL */
+
+function getCell(x, y) {
+
+    if (
+        x < 0 ||
+        y < 0 ||
+        x >= GRID_WIDTH ||
+        y >= GRID_HEIGHT
+    ) {
+        return null;
     }
-  }
+
+    const index =
+    y * GRID_WIDTH + x;
+
+    return document.querySelector(
+    `.cell[data-index="${index}"]`
+    );
+
 }
 
-function handleClick(r, c) {
-  if (currentTool === 'erase') {
-    grid[r][c] = null;
-  } else {
-    grid[r][c] = grid[r][c] === currentTool ? null : currentTool;
-  }
-  render();
+/* CLEAR RANGES */
+
+function clearRanges() {
+
+    document
+    .querySelectorAll('.cell')
+    .forEach(cell => {
+
+        cell.style.backgroundColor = '';
+
+    });
+
 }
 
-function render() {
-  const rangeTypes = {};
-  for (let r=0; r<ROWS; r++) for (let c=0; c<COLS; c++) {
-    const type = grid[r][c];
-    if (!type) continue;
-    for (const [rr,cc] of getRange(type, r, c)) {
-      const key = `${rr},${cc}`;
-      if (!rangeTypes[key]) rangeTypes[key] = new Set();
-      rangeTypes[key].add(type);
+/* UPDATE RANGES */
+
+function updateRanges() {
+
+    clearRanges();
+
+    const cells =
+    document.querySelectorAll('.cell');
+
+    cells.forEach(cell => {
+
+        const index =
+        Number(cell.dataset.index);
+
+        const x =
+        index % GRID_WIDTH;
+
+        const y =
+        Math.floor(index / GRID_WIDTH);
+
+        /* BASIC SPRINKLER */
+
+        if (
+        cell.classList.contains(
+        'sprinkler'
+        )) {
+
+            highlightPlus(
+            x,
+            y,
+            '#4FC3F7'
+            );
+
+        }
+
+        /* QUALITY SPRINKLER */
+
+        if (
+        cell.classList.contains(
+        'quality-sprinkler'
+        )) {
+
+            highlightQuality(
+            x,
+            y,
+            '#81C784'
+            );
+
+        }
+
+        /* IRIDIUM SPRINKLER */
+
+        if (
+        cell.classList.contains(
+        'iridium-sprinkler'
+        )) {
+
+            highlightIridium(
+            x,
+            y,
+            '#BA68C8'
+            );
+
+        }
+
+        /* SCARECROW */
+
+        if (
+        cell.classList.contains(
+        'scarecrow'
+        )) {
+
+            highlightScarecrow(
+            x,
+            y,
+            '#FFD54F'
+            );
+
+        }
+
+    });
+
+}
+
+/* BASIC SPRINKLER */
+/* 4 tiles */
+
+function highlightPlus(
+centerX,
+centerY,
+color
+) {
+
+    const positions = [
+
+        [0,-1],
+        [0,1],
+        [-1,0],
+        [1,0]
+
+    ];
+
+    positions.forEach(pos => {
+
+        const target =
+        getCell(
+        centerX + pos[0],
+        centerY + pos[1]
+        );
+
+        if (target) {
+
+            target.style
+            .backgroundColor =
+            color + '88';
+
+        }
+
+    });
+
+}
+
+/* QUALITY SPRINKLER */
+/* 8 surrounding tiles */
+
+function highlightQuality(
+centerX,
+centerY,
+color
+) {
+
+    for (
+    let y = -1;
+    y <= 1;
+    y++
+    ) {
+
+        for (
+        let x = -1;
+        x <= 1;
+        x++
+        ) {
+
+            if (
+            x === 0 &&
+            y === 0
+            ) continue;
+
+            const target =
+            getCell(
+            centerX + x,
+            centerY + y
+            );
+
+            if (target) {
+
+                target.style
+                .backgroundColor =
+                color + '88';
+
+            }
+
+        }
+
     }
-  }
 
-  let counts = {normal:0, quality:0, iridium:0, scarecrow:0};
-  for (let r=0; r<ROWS; r++) {
-    for (let c=0; c<COLS; c++) {
-      const cell = document.getElementById(`c-${r}-${c}`);
-      const type = grid[r][c];
-      const key = `${r},${c}`;
-      cell.className = 'cell';
-      cell.innerHTML = '';
-      if (type) {
-        counts[type]++;
-        cell.innerHTML = TOOLS[type].emoji;
-      } else if (rangeTypes[key]) {
-        const types = [...rangeTypes[key]];
-        cell.classList.add(TOOLS[types[0]].rangeClass);
-      }
+}
+
+/* IRIDIUM SPRINKLER */
+/* 5x5 */
+
+function highlightIridium(
+centerX,
+centerY,
+color
+) {
+
+    for (
+    let y = -2;
+    y <= 2;
+    y++
+    ) {
+
+        for (
+        let x = -2;
+        x <= 2;
+        x++
+        ) {
+
+            if (
+            x === 0 &&
+            y === 0
+            ) continue;
+
+            const target =
+            getCell(
+            centerX + x,
+            centerY + y
+            );
+
+            if (target) {
+
+                target.style
+                .backgroundColor =
+                color + '66';
+
+            }
+
+        }
+
     }
-  }
 
-  const parts = [];
-  if (counts.normal) parts.push(`${counts.normal} sprinkler`);
-  if (counts.quality) parts.push(`${counts.quality} quality`);
-  if (counts.iridium) parts.push(`${counts.iridium} iridium`);
-  if (counts.scarecrow) parts.push(`${counts.scarecrow} scarecrow`);
-  document.getElementById('info').textContent = parts.length
-    ? 'Placed: ' + parts.join(' · ')
-    : 'Select a tool and click tiles to place items.';
 }
 
-function setTool(tool) {
-  currentTool = tool;
-  document.querySelectorAll('.tool-btn').forEach(b => b.classList.remove('active'));
-  event.target.classList.add('active');
+/* REAL SCARECROW RANGE */
+/* TRUE 8 TILE RADIUS */
+
+function highlightScarecrow(
+centerX,
+centerY,
+color
+) {
+
+    const radius = 8;
+
+    for (
+    let y = -radius;
+    y <= radius;
+    y++
+    ) {
+
+        for (
+        let x = -radius;
+        x <= radius;
+        x++
+        ) {
+
+            const distance =
+            Math.sqrt(
+                x * x +
+                y * y
+            );
+
+            if (
+            distance <= radius
+            ) {
+
+                const target =
+                getCell(
+                centerX + x,
+                centerY + y
+                );
+
+                if (target) {
+
+                    target.style
+                    .backgroundColor =
+                    color + '33';
+
+                }
+
+            }
+
+        }
+
+    }
+
 }
 
-function clearAll() {
-  for (let r=0; r<ROWS; r++) for (let c=0; c<COLS; c++) grid[r][c] = null;
-  render();
-}
+/* SAVE */
 
-buildGrid();
-render();
+saveBtn.addEventListener('click', () => {
+
+    const layout = [];
+
+    document
+    .querySelectorAll('.cell')
+    .forEach(cell => {
+
+        let type = null;
+
+        allTools.forEach(tool => {
+
+            if (
+            cell.classList.contains(tool)
+            ) {
+
+                type = tool;
+
+            }
+
+        });
+
+        layout.push({
+
+            index:
+            cell.dataset.index,
+
+            type:
+            type
+
+        });
+
+    });
+
+    const blob =
+    new Blob(
+
+        [
+            JSON.stringify(
+            layout,
+            null,
+            2
+            )
+        ],
+
+        {
+            type:
+            'application/json'
+        }
+
+    );
+
+    const a =
+    document.createElement('a');
+
+    a.href =
+    URL.createObjectURL(blob);
+
+    a.download =
+    'farm-layout.json';
+
+    a.click();
+
+});
+
+/* LOAD */
+
+loadBtn.addEventListener('click', () => {
+
+    const input =
+    document.createElement('input');
+
+    input.type = 'file';
+
+    input.accept = '.json';
+
+    input.addEventListener(
+    'change',
+    (e) => {
+
+        const file =
+        e.target.files[0];
+
+        if (!file) return;
+
+        const reader =
+        new FileReader();
+
+        reader.onload =
+        (event) => {
+
+            const layout =
+            JSON.parse(
+            event.target.result
+            );
+
+            const cells =
+            document
+            .querySelectorAll('.cell');
+
+            cells.forEach(cell => {
+
+                clearCell(cell);
+
+            });
+
+            layout.forEach(item => {
+
+                const cell =
+                cells[item.index];
+
+                if (
+                cell &&
+                item.type
+                ) {
+
+                    cell.classList
+                    .add(item.type);
+
+                }
+
+            });
+
+            updateRanges();
+
+        };
+
+        reader.readAsText(file);
+
+    });
+
+    input.click();
+
+});
+
+/* CLEAR */
+
+clearBtn.addEventListener(
+'click',
+() => {
+
+    const confirmClear =
+    confirm(
+    'Clear the entire farm?'
+    );
+
+    if (!confirmClear) return;
+
+    document
+    .querySelectorAll('.cell')
+    .forEach(cell => {
+
+        clearCell(cell);
+
+    });
+
+    updateRanges();
+
+});
+
+updateRanges();

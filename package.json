@@ -1,22 +1,11 @@
 {
   "name": "farm-planner",
   "version": "1.0.0",
-  "description": "Stardew Valley Farm Planner",
   "main": "main.js",
   "scripts": {
-    "start": "electron .",
-    "build": "electron-builder"
+    "start": "electron ."
   },
-  "build": {
-    "appId": "com.farmplanner.app",
-    "productName": "Farm Planner",
-    "win": {
-      "target": "nsis",
-      "icon": "icon.ico"
-    }
-  },
-  "devDependencies": {
-    "electron": "^28.0.0",
-    "electron-builder": "^24.0.0"
+  "dependencies": {
+    "electron": "^28.3.3"
   }
 }

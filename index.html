@@ -1,25 +1,198 @@
 <!DOCTYPE html>
-<html>
+<html lang="en">
+
 <head>
-  <meta charset="UTF-8">
-  <title>Farm Planner</title>
-  <link rel="stylesheet" href="style.css">
+
+<meta charset="UTF-8">
+
+<meta name="viewport"
+content="width=device-width, initial-scale=1.0">
+
+<title>Stardew Valley Planner</title>
+
+<style>
+
+body{
+    font-family: Arial, sans-serif;
+    background:#d6c28a;
+    margin:0;
+    padding:20px;
+    display:flex;
+    flex-direction:column;
+    align-items:center;
+}
+
+h1{
+    color:#4b2e05;
+    margin-bottom:20px;
+}
+
+#controls{
+    display:flex;
+    gap:10px;
+    flex-wrap:wrap;
+    justify-content:center;
+    margin-bottom:20px;
+}
+
+button{
+    padding:10px 16px;
+    border:none;
+    border-radius:8px;
+    cursor:pointer;
+    font-weight:bold;
+    color:white;
+    display:flex;
+    align-items:center;
+    gap:8px;
+    background:#8b5a2b;
+}
+
+button.active{
+    background:#4CAF50;
+}
+
+button::before{
+    content:"";
+    width:22px;
+    height:22px;
+    background-size:contain;
+    background-repeat:no-repeat;
+    background-position:center;
+    display:inline-block;
+}
+
+/* SCARECROW */
+button[data-tool="scarecrow"]::before{
+    background-image:url('https://cdn-icons-png.flaticon.com/512/6195/6195700.png');
+}
+
+/* BASIC SPRINKLER */
+button[data-tool="sprinkler"]::before{
+    background-image:url('https://stardewvalleywiki.com/mediawiki/images/0/08/Sprinkler.png');
+}
+
+/* QUALITY SPRINKLER */
+button[data-tool="quality-sprinkler"]::before{
+    background-image:url('https://stardewvalleywiki.com/mediawiki/images/a/af/Quality_Sprinkler.png');
+}
+
+/* IRIDIUM SPRINKLER */
+button[data-tool="iridium-sprinkler"]::before{
+    background-image:url('https://stardewvalleywiki.com/mediawiki/images/9/90/Iridium_Sprinkler.png');
+}
+
+#save-btn{
+    background:#2196F3;
+}
+
+#load-btn{
+    background:#ff9800;
+}
+
+#clear-btn{
+    background:#f44336;
+}
+
+#save-btn::before,
+#load-btn::before,
+#clear-btn::before{
+    display:none;
+}
+
+#grid{
+    display:grid;
+    grid-template-columns:repeat(40,24px);
+    grid-template-rows:repeat(30,24px);
+    gap:1px;
+    background:#5c3b12;
+    padding:4px;
+    border-radius:10px;
+}
+
+.cell{
+    width:24px;
+    height:24px;
+    background:#7fbf5b;
+    background-size:contain;
+    background-repeat:no-repeat;
+    background-position:center;
+    cursor:pointer;
+}
+
+.cell:hover{
+    filter:brightness(1.1);
+}
+
+/* TILE IMAGES */
+
+.scarecrow{
+    background-image:url('https://cdn-icons-png.flaticon.com/512/6195/6195700.png');
+}
+
+.sprinkler{
+    background-image:url('https://stardewvalleywiki.com/mediawiki/images/0/08/Sprinkler.png');
+}
+
+.quality-sprinkler{
+    background-image:url('https://stardewvalleywiki.com/mediawiki/images/a/af/Quality_Sprinkler.png');
+}
+
+.iridium-sprinkler{
+    background-image:url('https://stardewvalleywiki.com/mediawiki/images/9/90/Iridium_Sprinkler.png');
+}
+
+</style>
+
 </head>
+
 <body>
 
-  <div class="toolbar">
-    <button class="tool-btn active" onclick="setTool('normal')">💧 Sprinkler</button>
-    <button class="tool-btn" onclick="setTool('quality')">🚿 Quality Sprinkler</button>
-    <button class="tool-btn" onclick="setTool('iridium')">⚙️ Iridium Sprinkler</button>
-    <button class="tool-btn" onclick="setTool('scarecrow')">🌾 Scarecrow</button>
-    <button class="tool-btn" onclick="setTool('erase')">❌ Erase</button>
-    <button class="tool-btn" onclick="clearAll()">🗑️ Clear All</button>
-  </div>
+<h1>🌾 Stardew Valley Planner 🌾</h1>
 
-  <div id="grid"></div>
+<div id="controls">
 
-  <div class="info" id="info">Select a tool and click tiles to place items.</div>
+    <button
+    class="tool-btn active"
+    data-tool="scarecrow">
+    Scarecrow
+    </button>
 
-  <script src="renderer.js"></script>
+    <button
+    class="tool-btn"
+    data-tool="sprinkler">
+    Sprinkler
+    </button>
+
+    <button
+    class="tool-btn"
+    data-tool="quality-sprinkler">
+    Quality Sprinkler
+    </button>
+
+    <button
+    class="tool-btn"
+    data-tool="iridium-sprinkler">
+    Iridium Sprinkler
+    </button>
+
+    <button id="save-btn">
+    Save Layout
+    </button>
+
+    <button id="load-btn">
+    Load Layout
+    </button>
+
+    <button id="clear-btn">
+    Clear All
+    </button>
+
+</div>
+
+<div id="grid"></div>
+
+<script src="renderer.js"></script>
+
 </body>
 </html>
