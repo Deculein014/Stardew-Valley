@@ -10,6 +10,8 @@ part learning experience, part proof that being too into Stardew Valley can actu
 - Place scarecrows
 - Automatically shows coverage range
 - Save and load your farm layout
+- Toggle range visibility
+- Undo/redo support (Ctrl+Z / Ctrl+Y)
 - Clear all tool
 
 ## How to Run
@@ -21,4 +23,4 @@ part learning experience, part proof that being too into Stardew Valley can actu
 - Electron
 
 ---
-*Shit*
+*WEST SIDE*
