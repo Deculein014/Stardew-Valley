@@ -135,6 +135,7 @@ function clearRanges() {
 }
 
 /* UPDATE RANGES */
+/* scarecrow first, sprinklers last so they show on top */
 
 function updateRanges() {
 
@@ -142,6 +143,8 @@ function updateRanges() {
 
     const cells =
     document.querySelectorAll('.cell');
+
+    /* PASS 1: SCARECROW */
 
     cells.forEach(cell => {
 
@@ -154,7 +157,33 @@ function updateRanges() {
         const y =
         Math.floor(index / GRID_WIDTH);
 
-        /* BASIC SPRINKLER */
+        if (
+        cell.classList.contains(
+        'scarecrow'
+        )) {
+
+            highlightScarecrow(
+            x,
+            y,
+            '#FFD54F'
+            );
+
+        }
+
+    });
+
+    /* PASS 2: SPRINKLERS */
+
+    cells.forEach(cell => {
+
+        const index =
+        Number(cell.dataset.index);
+
+        const x =
+        index % GRID_WIDTH;
+
+        const y =
+        Math.floor(index / GRID_WIDTH);
 
         if (
         cell.classList.contains(
@@ -169,8 +198,6 @@ function updateRanges() {
 
         }
 
-        /* QUALITY SPRINKLER */
-
         if (
         cell.classList.contains(
         'quality-sprinkler'
@@ -184,8 +211,6 @@ function updateRanges() {
 
         }
 
-        /* IRIDIUM SPRINKLER */
-
         if (
         cell.classList.contains(
         'iridium-sprinkler'
@@ -195,21 +220,6 @@ function updateRanges() {
             x,
             y,
             '#BA68C8'
-            );
-
-        }
-
-        /* SCARECROW */
-
-        if (
-        cell.classList.contains(
-        'scarecrow'
-        )) {
-
-            highlightScarecrow(
-            x,
-            y,
-            '#FFD54F'
             );
 
         }
@@ -348,8 +358,16 @@ color
 
 }
 
-/* REAL SCARECROW RANGE */
-/* TRUE 8 TILE RADIUS */
+/* SCARECROW RANGE */
+/* matches exact in-game 17x17 shape */
+/* corners cut: 4 at row ±8, 3 at ±7, 2 at ±6, 1 at ±5 */
+
+const SCARECROW_CORNER_CUT = {
+    8: 4,
+    7: 3,
+    6: 2,
+    5: 1
+};
 
 function highlightScarecrow(
 centerX,
@@ -357,43 +375,38 @@ centerY,
 color
 ) {
 
-    const radius = 8;
-
     for (
-    let y = -radius;
-    y <= radius;
-    y++
+    let dy = -8;
+    dy <= 8;
+    dy++
     ) {
 
+        const cut =
+        SCARECROW_CORNER_CUT[
+            Math.abs(dy)
+        ] || 0;
+
         for (
-        let x = -radius;
-        x <= radius;
-        x++
+        let dx = -8;
+        dx <= 8;
+        dx++
         ) {
 
-            const distance =
-            Math.sqrt(
-                x * x +
-                y * y
+            if (dx === 0 && dy === 0) continue;
+
+            if (Math.abs(dx) > 8 - cut) continue;
+
+            const target =
+            getCell(
+            centerX + dx,
+            centerY + dy
             );
 
-            if (
-            distance <= radius
-            ) {
+            if (target) {
 
-                const target =
-                getCell(
-                centerX + x,
-                centerY + y
-                );
-
-                if (target) {
-
-                    target.style
-                    .backgroundColor =
-                    color + '33';
-
-                }
+                target.style
+                .backgroundColor =
+                color + '33';
 
             }
 
